@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{%block title%}User info{%endblock%}
+
+{% block content %}
+
+<div class="container">
+    <h2 class="display-6">User Info</h2>
+    <form>
+        {{ form.hidden_tag() }}
+
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        <p>
+            {{ field.label }}
+            {{ field(class_="form-control") }}
+
+            {% for error in field.errors %}
+            {{ error }}
+            {% endfor %}
+        </p>
+        {% endfor %}
+    </form>
+    <a href="/users/{{user.username}}/feedback/add" class="btn btn-info">Add a feedback</a>
+    <form action="/users/{{user.username}}/delete" method="POST">
+        <button class="btn btn-danger">Delete user</button>
+    </form>
+    <h2 class="display-6">Feedback List</h2>
+    <ul>
+        {% for feedback in feedbacks %}
+
+        <li>
+            <b>{{ feedback.title }}</b>
+            <small>{{ feedback.content }}</small>
+            <span class="text-muted">by {{feedback.user.username}}</span>
+        </li>
+
+        {%if feedback.user.username == session['username']%}
+        <form>
+            <button class="btn btn-primary" formmethod="GET" formaction="/feedback/{{ feedback.id }}/update">
+                Edit
+            </button>
+            <button class="btn btn-danger" formmethod="POST" formaction="/feedback/{{ feedback.id }}/delete">
+                Delete
+            </button>
+        </form>
+        {%endif%}
+        {% endfor %}
+    </ul>
+    <a href="/" class="btn btn-success">Home</a>
+    <a href="/logout" class="btn btn-danger">Logout</a>
+</div>
+
+{% endblock %}
